@@ -50,9 +50,9 @@ public class PlayerComponent extends Component {
 
         float dy = currentSpeedY * WindowUtils.getFrameTimeSeconds();
 
-        cameraComponent.transformComponent.pos.x -= dx;
-        cameraComponent.transformComponent.pos.z -= dz;
-        cameraComponent.transformComponent.pos.y -= dy;
+        cameraComponent.transformComponent.getPos().x -= dx;
+        cameraComponent.transformComponent.getPos().z -= dz;
+        cameraComponent.transformComponent.getPos().y -= dy;
 
         cameraComponent.viewComponent.viewpoint.x = rotX;
         cameraComponent.viewComponent.viewpoint.y = rotY;
