@@ -26,7 +26,7 @@ public class CameraComponent extends Component {
     }
 
     public Vector3f getPosition() {
-        return transformComponent.pos;
+        return transformComponent.getPos();
     }
 
     public Matrix4f getViewMatrix() {
