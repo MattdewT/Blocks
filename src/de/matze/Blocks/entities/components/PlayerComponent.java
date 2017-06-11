@@ -36,7 +36,7 @@ public class PlayerComponent extends Component {
         return cameraComponent.getViewMatrix();
     }
 
-    public void Update() {
+    public void update() {
         checkInputs();
 
         float distanceX = currentSpeedX * WindowUtils.getFrameTimeSeconds();

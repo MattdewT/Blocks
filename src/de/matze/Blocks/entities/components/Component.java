@@ -12,7 +12,7 @@ public class  Component {
     private ComponentTypes ComponentType;
 
     public enum ComponentTypes {
-        Transform, ViewPoint, Camera, Player, aabb;
+        Transform, ViewPoint, Camera, Player;
     }
 
     public Component(ComponentTypes ComponentId) {

@@ -54,4 +54,8 @@ public class TerrainRenderer {
         glBindVertexArray(0);
     }
 
+    public void cleanUp() {
+        shader.cleanUp();
+    }
+
 }

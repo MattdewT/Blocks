@@ -1,9 +1,20 @@
 package de.matze.Blocks.main;
 
+import de.matze.Blocks.entities.GameObject;
+import de.matze.Blocks.entities.components.*;
+import de.matze.Blocks.graphics.Loader;
 import de.matze.Blocks.input.Keyboard;
 import de.matze.Blocks.input.MouseButtons;
 import de.matze.Blocks.input.MousePos;
+import de.matze.Blocks.maths.Matrix4f;
+import de.matze.Blocks.maths.Vector3f;
+import de.matze.Blocks.mechanics.terrain.TerrainRenderer;
+import de.matze.Blocks.mechanics.terrain.TerrainShader;
+import de.matze.Blocks.mechanics.terrain.TerrainTile;
 import de.matze.Blocks.utils.WindowUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -34,6 +45,14 @@ public class BasicWindow implements Runnable{
         return 10;
     }
 
+    GameObject Player;
+
+    //Terrain Test
+    List<TerrainTile> terrains;
+    TerrainRenderer terrainRenderer;
+    Loader loader;
+    TerrainShader terrainShader;
+
     public  void start() {
         running = true;
         thread = new Thread(this, "BasicWindow");
@@ -50,6 +69,8 @@ public class BasicWindow implements Runnable{
                 running = false;
         }
         WindowUtils.cleanUp();
+        terrainRenderer.cleanUp();
+        loader.cleanUp();
     }
 
     private void init() {
@@ -63,31 +84,34 @@ public class BasicWindow implements Runnable{
 
         WindowUtils.init(keyboard, mousePos,mouseButtons);
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, 400, 0, 300, 1, -1);
-        glMatrixMode(GL_MODELVIEW);
+        Player = new GameObject(0);
+        Player.addComponent(new TransformComponent(new Vector3f(0, 20, 0)));
+        Player.addComponent(new ViewComponent());
+        Player.addComponent(new CameraComponent(Player));
+        Player.addComponent(new PlayerComponent(Player));
+
+        loader = new Loader();
+        terrains = new ArrayList<>();
+        terrainShader = new TerrainShader();
+        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f), terrainShader);
+        terrains.add(new TerrainTile(0, 0, loader));
     }
 
     private void update() {
         glfwPollEvents();
+
+        ((PlayerComponent) Player.getComponent(Component.ComponentTypes.Player)).update();
+
         WindowUtils.update();
     }
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
-        //Test Stuff
-        glColor3f(1.0f,1.0f,0.0f);
-
-        glBegin(GL_QUADS);
-        glVertex2f(getX(),getY());
-        glVertex2f(getX()+width,getY());
-        glVertex2f(getX()+width,getY()+height);
-        glVertex2f(getX(),getY()+height);
-        glEnd();
-
+        terrainShader.enable();
+        terrainShader.setViewMatrix(((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getViewMatrix());
+        terrainRenderer.render(terrains);
+        terrainShader.disable();
 
         glfwSwapBuffers(WindowUtils.getWindow());
     }
