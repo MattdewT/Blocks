@@ -18,8 +18,6 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 /**
  * @autor matze
@@ -36,8 +34,8 @@ public class BasicWindow implements Runnable{
     private MousePos mousePos;
 
     //Test Stuff
-    float width = 10;
-    float height = 10;
+    float width = 100;
+    float height = 100;
     float getX() {
         return 10;
     }
@@ -93,7 +91,8 @@ public class BasicWindow implements Runnable{
         loader = new Loader();
         terrains = new ArrayList<>();
         terrainShader = new TerrainShader();
-        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f), terrainShader);
+//        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f), terrainShader);
+        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-150f, 150f, -200f, 200f, 0.3f, 1200f),terrainShader);
         terrains.add(new TerrainTile(0, 0, loader));
     }
 
@@ -111,6 +110,14 @@ public class BasicWindow implements Runnable{
         terrainShader.enable();
         terrainShader.setViewMatrix(((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getViewMatrix());
         terrainRenderer.render(terrains);
+
+        glBegin(GL_QUADS);
+        glVertex3f(getX(),getY(), 1f);
+        glVertex3f(getX()+width,getY(), 1f);
+        glVertex3f(getX()+width,getY()+height, 1f);
+        glVertex3f(getX(),getY()+height, 1f);
+        glEnd();
+
         terrainShader.disable();
 
         glfwSwapBuffers(WindowUtils.getWindow());
