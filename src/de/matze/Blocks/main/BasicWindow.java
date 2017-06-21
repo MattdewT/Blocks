@@ -18,6 +18,8 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 /**
  * @autor matze
@@ -83,7 +85,7 @@ public class BasicWindow implements Runnable{
         WindowUtils.init(keyboard, mousePos,mouseButtons);
 
         Player = new GameObject(0);
-        Player.addComponent(new TransformComponent(new Vector3f(0, 20, 0)));
+        Player.addComponent(new TransformComponent(new Vector3f(0, 0, 0)));
         Player.addComponent(new ViewComponent());
         Player.addComponent(new CameraComponent(Player));
         Player.addComponent(new PlayerComponent(Player));
@@ -91,9 +93,16 @@ public class BasicWindow implements Runnable{
         loader = new Loader();
         terrains = new ArrayList<>();
         terrainShader = new TerrainShader();
-//        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f), terrainShader);
-        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-150f, 150f, -200f, 200f, 0.3f, 1200f),terrainShader);
+        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic_copied(0, 400, 0, 300, 10, -10), terrainShader);
+//        terrainRenderer = new TerrainRenderer(Matrix4f.gluPerspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
         terrains.add(new TerrainTile(0, 0, loader));
+
+        //Projectionmatrix setzen
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+//        glOrtho(0, 400, 0, 300, 1, -1);
+        glLoadMatrixf(Matrix4f.orthographic_copied(-200, 200, -150, 150, 100, -100).toFloatBuffer());
+        glMatrixMode(GL_MODELVIEW);
     }
 
     private void update() {
@@ -111,14 +120,31 @@ public class BasicWindow implements Runnable{
         terrainShader.setViewMatrix(((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getViewMatrix());
         terrainRenderer.render(terrains);
 
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glColor3f(0,1,1);
+
         glBegin(GL_QUADS);
-        glVertex3f(getX(),getY(), 1f);
-        glVertex3f(getX()+width,getY(), 1f);
-        glVertex3f(getX()+width,getY()+height, 1f);
-        glVertex3f(getX(),getY()+height, 1f);
+        glVertex3f(getX(),getY(),1);
+        glVertex3f(getX()+width,getY(),1);
+        glVertex3f(getX()+width,getY()+height,1);
+        glVertex3f(getX(),getY()+height,1);
         glEnd();
 
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+
         terrainShader.disable();
+
+//        glColor3f(0,1,1);
+//
+//        glBegin(GL_QUADS);
+//        glVertex3f(getX(),getY(),-1);
+//        glVertex3f(getX()+width,getY(),-1);
+//        glVertex3f(getX()+width,getY()+height,-1);
+//        glVertex3f(getX(),getY()+height,-1);
+//        glEnd();
 
         glfwSwapBuffers(WindowUtils.getWindow());
     }

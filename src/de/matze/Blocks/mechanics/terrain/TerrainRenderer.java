@@ -33,7 +33,8 @@ public class TerrainRenderer {
 //				continue;
 
             prepareTerrain(t);
-            shader.setModelMatrix(t.getModelMatrix());
+//            shader.setModelMatrix(t.getModelMatrix());//ToDo change back
+            shader.setModelMatrix(Matrix4f.identity());
             glDrawElements(GL_TRIANGLES, t.getModel().getCount(), GL_UNSIGNED_INT, 0);
             unbind();
         }
@@ -43,14 +44,14 @@ public class TerrainRenderer {
         glBindVertexArray(t.getModel().getVaoID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+//        glEnableVertexAttribArray(2);
 //        glBindTexture(GL_TEXTURE_2D, t.getTexture().getTexID());
     }
 
     public void unbind() {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+//        glDisableVertexAttribArray(2);
         glBindVertexArray(0);
     }
 

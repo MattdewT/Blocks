@@ -27,8 +27,7 @@ public class TerrainShader extends Shader {
     @Override
     protected void bindAttributes() {
         bindAttribute(0, "position");
-        bindAttribute(1, "textures");
-        bindAttribute(2, "normal");
+        bindAttribute(1, "normal");
     }
 
     @Override

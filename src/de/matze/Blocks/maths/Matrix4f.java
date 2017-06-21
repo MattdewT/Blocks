@@ -176,7 +176,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f translate(float x, float y, float z) {
-        Matrix4f translation = new Matrix4f();
+        Matrix4f translation = new Matrix4f().identity();
 
         translation.elements[0 + 3 * 4] = x;
         translation.elements[1 + 3 * 4] = y;
@@ -309,6 +309,7 @@ public class Matrix4f {
             return null;
     }
 
+    //ToDO: function is mailfuncting
     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
         Matrix4f ortho = new Matrix4f();
 
@@ -324,6 +325,34 @@ public class Matrix4f {
         ortho.elements[2 + 3 * 4] = tz;
 
         return ortho;
+    }
+
+    //ToDo: copied functiuon
+    public static Matrix4f orthographic_copied(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f result = identity();
+
+        result.elements[0 + 0 * 4] = 2.0f / (right - left);
+
+        result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
+
+        result.elements[2 + 2 * 4] = 2.0f / (near - far);
+
+        result.elements[0 + 3 * 4] = (left + right) / (left - right);
+        result.elements[1 + 3 * 4] = (bottom + top) / (bottom - top);
+        result.elements[2 + 3 * 4] = (far + near) / (far - near);
+
+        return result;
+    }
+
+    //ToDo: copied function
+    public static Matrix4f gluPerspective(float fovy, float aspect, float zNear, float zFar) {
+        float bottom = (float) (-zNear * Math.tan(0.5f * fovy * Math.PI / 180.0f));
+        float top = -bottom;
+
+        float left = aspect * bottom;
+        float right = -left;
+
+        return (frustum(left, right, bottom, top, zNear, zFar));
     }
 
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
