@@ -2,7 +2,6 @@ package de.matze.Blocks.graphics;
 
 import de.matze.Blocks.utils.BufferUtils;
 
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +9,7 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
 /**
  * @autor matze
@@ -75,9 +72,16 @@ public class Loader {
         return new VertexArray(VaoID, indices.length);
     }
 
+    public VertexArray loadToVAO(float[] verticies, int dimensions) {
+        int VaoID = createVAO();
+        AddAttributeList(verticies, 0, 3);
+        unbindVAO();
+        return new VertexArray(VaoID, verticies.length / dimensions);
+    }
+
     //================================================= Texture Stuff ======================================
 
-    //ToDo: Texture Stuff
+
 
     //================================================= Clean Up Stuff ======================================
 

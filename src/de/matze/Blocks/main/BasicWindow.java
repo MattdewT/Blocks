@@ -81,7 +81,8 @@ public class BasicWindow implements Runnable{
         loader = new Loader();
         terrains = new ArrayList<>();
         terrainShader = new TerrainShader();
-        terrainRenderer = new TerrainRenderer(Matrix4f.gluPerspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
+//        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-200, 200, -150, 150, 0.3f, 1200),terrainShader);
+        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
         terrains.add(new TerrainTile(0, 0, loader));
     }
 

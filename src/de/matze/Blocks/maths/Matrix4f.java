@@ -75,7 +75,7 @@ public class Matrix4f {
 
     public static Matrix4f scale(Vector3f vec, Matrix4f src, Matrix4f dest) {
         if (dest == null)
-            dest = new Matrix4f();
+            dest = identity();
         dest.elements[0 + 0 * 4] = src.elements[0 + 0 * 4] * vec.x;
         dest.elements[0 + 1 * 4] = src.elements[0 + 1 * 4] * vec.x;
         dest.elements[0 + 2 * 4] = src.elements[0 + 2 * 4] * vec.x;
@@ -93,7 +93,7 @@ public class Matrix4f {
 
     public static Matrix4f rotate(float angle, Vector3f axis, Matrix4f src, Matrix4f dest) {
         if (dest == null)
-            dest = new Matrix4f();
+            dest = identity();
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
         float oneminusc = 1.0f - c;
@@ -140,7 +140,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f rotate(float angle, float x, float y, float z) {
-        Matrix4f rotation = new Matrix4f();
+        Matrix4f rotation = identity();
 
         float c = (float) Math.cos(Math.toRadians(angle));
         float s = (float) Math.sin(Math.toRadians(angle));
@@ -166,7 +166,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f scale(float x, float y, float z) {
-        Matrix4f scaling = new Matrix4f();
+        Matrix4f scaling = identity();
 
         scaling.elements[0 + 0 * 4] = x;
         scaling.elements[1 + 1 * 4] = y;
@@ -176,7 +176,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f translate(float x, float y, float z) {
-        Matrix4f translation = new Matrix4f().identity();
+        Matrix4f translation = identity();
 
         translation.elements[0 + 3 * 4] = x;
         translation.elements[1 + 3 * 4] = y;
@@ -191,7 +191,7 @@ public class Matrix4f {
 
     public static Matrix4f translate(Vector3f vec, Matrix4f src, Matrix4f dest) {
         if (dest == null)
-            dest = new Matrix4f();
+            dest = identity();
 
         dest.elements[3 + 0 * 4] += src.elements[0 + 0 * 4] * vec.x + src.elements[1 + 0 * 4] * vec.y + src.elements[2 + 0 * 4] * vec.z;
         dest.elements[3 + 1 * 4] += src.elements[0 + 1 * 4] * vec.x + src.elements[1 + 1 * 4] * vec.y + src.elements[2 + 1 * 4] * vec.z;
@@ -203,7 +203,7 @@ public class Matrix4f {
 
     public static Matrix4f transpose(Matrix4f src, Matrix4f dest) {
         if (dest == null)
-            dest = new Matrix4f();
+            dest = identity();
         dest.elements[0 + 0 * 4] = src.elements[0 + 0 * 4];
         dest.elements[0 + 1 * 4] = src.elements[1 + 0 * 4];
         dest.elements[0 + 2 * 4] = src.elements[2 + 0 * 4];
@@ -311,7 +311,7 @@ public class Matrix4f {
 
     //ToDO: function is mailfuncting
     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f ortho = new Matrix4f();
+        Matrix4f ortho = identity();
 
         float tx = -(right + left) / (right - left);
         float ty = -(top + bottom) / (top - bottom);
@@ -344,39 +344,8 @@ public class Matrix4f {
         return result;
     }
 
-    //ToDo: copied function
-    public static Matrix4f gluPerspective(float fovy, float aspect, float zNear, float zFar) {
-        float bottom = (float) (-zNear * Math.tan(0.5f * fovy * Math.PI / 180.0f));
-        float top = -bottom;
-
-        float left = aspect * bottom;
-        float right = -left;
-
-        return (perspective(left, right, bottom, top, zNear, zFar));
-    }
-    //ToDo: copied function
-    public static Matrix4f perspective(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f result = identity();
-
-
-        result.elements[0 + 0 * 4] = (2.0f * near) / (right - left);
-
-        result.elements[1 + 1 * 4] = (2.0f * near) / (top - bottom);
-
-        result.elements[2 + 2 * 4] = (-1.0f * (far + near)) / (far - near);
-
-        result.elements[0 + 2 * 4] = (right + left) / (right - left);
-        result.elements[1 + 2 * 4] = (top + bottom) / (top - bottom);
-        result.elements[2 + 3 * 4] = (-2.0f * far * near) / (far - near);
-
-        result.elements[3 + 2 * 4] = -1.0f;
-        result.elements[3 + 3 * 4] = 0.0f;
-
-        return result;
-    }
-
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f frustum = new Matrix4f();
+        Matrix4f frustum = identity();
 
         float a = (right + left) / (right - left);
         float b = (top + bottom) / (top - bottom);
@@ -396,7 +365,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
-        Matrix4f perspective = new Matrix4f();
+        Matrix4f perspective = identity();
 
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
 

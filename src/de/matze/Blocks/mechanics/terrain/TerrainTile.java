@@ -10,7 +10,8 @@ import de.matze.Blocks.maths.Matrix4f;
  * Created by matze on 05.09.16.
  */
 
-//ToDo: check class => Terrain Master-
+//ToDo: check class => Terrain Master
+//ToDo: rearenage to gameobject
 
 public class TerrainTile {
 
