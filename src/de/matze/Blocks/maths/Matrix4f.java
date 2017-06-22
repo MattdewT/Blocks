@@ -352,7 +352,27 @@ public class Matrix4f {
         float left = aspect * bottom;
         float right = -left;
 
-        return (frustum(left, right, bottom, top, zNear, zFar));
+        return (perspective(left, right, bottom, top, zNear, zFar));
+    }
+    //ToDo: copied function
+    public static Matrix4f perspective(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f result = identity();
+
+
+        result.elements[0 + 0 * 4] = (2.0f * near) / (right - left);
+
+        result.elements[1 + 1 * 4] = (2.0f * near) / (top - bottom);
+
+        result.elements[2 + 2 * 4] = (-1.0f * (far + near)) / (far - near);
+
+        result.elements[0 + 2 * 4] = (right + left) / (right - left);
+        result.elements[1 + 2 * 4] = (top + bottom) / (top - bottom);
+        result.elements[2 + 3 * 4] = (-2.0f * far * near) / (far - near);
+
+        result.elements[3 + 2 * 4] = -1.0f;
+        result.elements[3 + 3 * 4] = 0.0f;
+
+        return result;
     }
 
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {

@@ -5,8 +5,9 @@ import de.matze.Blocks.maths.Matrix4f;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 /**
  * @author matze tiroch
@@ -33,8 +34,7 @@ public class TerrainRenderer {
 //				continue;
 
             prepareTerrain(t);
-//            shader.setModelMatrix(t.getModelMatrix());//ToDo change back
-            shader.setModelMatrix(Matrix4f.identity());
+            shader.setModelMatrix(t.getModelMatrix());
             glDrawElements(GL_TRIANGLES, t.getModel().getCount(), GL_UNSIGNED_INT, 0);
             unbind();
         }
