@@ -8,6 +8,7 @@ import de.matze.Blocks.input.MouseButtons;
 import de.matze.Blocks.input.MousePos;
 import de.matze.Blocks.maths.Matrix4f;
 import de.matze.Blocks.maths.Vector3f;
+import de.matze.Blocks.mechanics.skybox.Skybox;
 import de.matze.Blocks.mechanics.terrain.TerrainRenderer;
 import de.matze.Blocks.mechanics.terrain.TerrainShader;
 import de.matze.Blocks.mechanics.terrain.TerrainTile;
@@ -40,6 +41,9 @@ public class BasicWindow implements Runnable{
     TerrainRenderer terrainRenderer;
     Loader loader;
     TerrainShader terrainShader;
+
+    //Skybox Test
+    Skybox skybox;
 
     public  void start() {
         running = true;
@@ -84,6 +88,8 @@ public class BasicWindow implements Runnable{
 //        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-200, 200, -150, 150, 0.3f, 1200),terrainShader);
         terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
         terrains.add(new TerrainTile(0, 0, loader));
+
+        skybox = new Skybox(loader, Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f));
     }
 
     private void update() {
@@ -96,6 +102,8 @@ public class BasicWindow implements Runnable{
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        skybox.render(((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getViewPoint());
 
         terrainShader.enable();
         terrainShader.setViewMatrix(((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getViewMatrix());

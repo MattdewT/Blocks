@@ -1,12 +1,19 @@
 package de.matze.Blocks.graphics;
 
 import de.matze.Blocks.utils.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
@@ -81,7 +88,51 @@ public class Loader {
 
     //================================================= Texture Stuff ======================================
 
+    public int loadCubeMap(String[] textureFiles) {
+        int texID = glGenTextures();
+        glActiveTexture(GL13.GL_TEXTURE0);
+        glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
 
+        for (int i = 0; i < textureFiles.length; i++) {
+            TextureData data = decodeTextureFile("res/textures/skybox/" + textureFiles[i] + ".png");
+            GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0,
+                    GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data.getBuffer());
+        }
+
+        glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, 0);
+        textures.add(texID);
+        return texID;
+    }
+
+    private TextureData decodeTextureFile(String path) {
+        int[] pixels = null;
+        int width = 0, height = 0;
+        try {
+            BufferedImage image = ImageIO.read(new FileInputStream(path));
+            width = image.getWidth();
+            height = image.getHeight();
+            pixels = new int[width * height];
+            image.getRGB(0, 0, width, height, pixels, 0, width);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int[] data = new int[width * height];
+        for (int i = 0; i < width * height; i++) {
+            assert pixels != null;
+            int a = (pixels[i] & 0xff000000) >> 24;
+            int r = (pixels[i] & 0xff0000) >> 16;
+            int g = (pixels[i] & 0xff00) >> 8;
+            int b = (pixels[i] & 0xff);
+
+            data[i] = a << 24 | b << 16 | g << 8 | r;
+        }
+        return new TextureData(BufferUtils.createIntBuffer(data), width, height);
+    }
 
     //================================================= Clean Up Stuff ======================================
 
