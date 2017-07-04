@@ -1,8 +1,8 @@
 #version 130
 
-varying vec3 v_norm;
+flat varying vec3 v_diffuse;
 
 void main()
 {
-	gl_FragColor = vec4(normalize(v_norm),1);
+	gl_FragColor = vec4(v_diffuse,1);
 }

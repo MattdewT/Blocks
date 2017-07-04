@@ -3,6 +3,9 @@ package de.matze.Blocks.mechanics.terrain;
 import de.matze.Blocks.graphics.Loader;
 import de.matze.Blocks.graphics.VertexArray;
 import de.matze.Blocks.maths.Matrix4f;
+import de.matze.Blocks.maths.Vector3f;
+import de.matze.Blocks.mechanics.terrain.generators.HeigthGenerator;
+import de.matze.Blocks.mechanics.terrain.generators.Perlin;
 
 /**
  * @author matze tiroch
@@ -16,7 +19,7 @@ import de.matze.Blocks.maths.Matrix4f;
 public class TerrainTile {
 
     private static final float SIZE = 100;
-    private static final int VERTEX_COUNT = 128;
+    private static final int VERTEX_COUNT = 32;
 
     private float x;
     private float z;
@@ -26,32 +29,33 @@ public class TerrainTile {
     public TerrainTile(int gridX, int gridZ, Loader loader) {
         this.x = gridX * SIZE;
         this.z = gridZ * SIZE;
-        this.model = generateTerrain(loader);
+        this.model = generateTerrain(loader, new Perlin());
         ml_matrix = Matrix4f.translate(x, 0, z);
     }
 
-    private VertexArray generateTerrain(Loader loader) {
+    private VertexArray generateTerrain(Loader loader, HeigthGenerator heigthGenerator) {
+
         int count = VERTEX_COUNT * VERTEX_COUNT;
         float[] vertices = new float[count * 3];
         float[] normals = new float[count * 3];
-//        float[] textureCoords = new float[count * 2];
         int[] indices = new int[6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT * 1)];
         int vertexPointer = 0;
         for (int i = 0; i < VERTEX_COUNT; i++) {
             for (int j = 0; j < VERTEX_COUNT; j++) {
-                vertices[vertexPointer * 3] = -(float) j / ((float) VERTEX_COUNT - 1) * SIZE;
-                vertices[vertexPointer * 3 + 1] = 0;
+                vertices[vertexPointer * 3] = -(float) j / ((float) VERTEX_COUNT - 1) * SIZE;                           //calculate VertexPositions
+                vertices[vertexPointer * 3 + 1] = heigthGenerator.generateHeigth(j,i);
                 vertices[vertexPointer * 3 + 2] = -(float) i / ((float) VERTEX_COUNT - 1) * SIZE;
-                normals[vertexPointer * 3] = 0;
-                normals[vertexPointer * 3 + 1] = 1;
-                normals[vertexPointer * 3 + 2] = 0;
-//                textureCoords[vertexPointer * 2] = (float) j / ((float) VERTEX_COUNT - 1);
-//                textureCoords[vertexPointer * 2 + 1] = (float) i / ((float) VERTEX_COUNT - 1);
+
+                Vector3f normal = calculateNormal(j,i, heigthGenerator);                                                //set Normals
+                normals[vertexPointer * 3] = normal.x;
+                normals[vertexPointer * 3 + 1] = normal.y;
+                normals[vertexPointer * 3 + 2] = normal.z;
+
                 vertexPointer++;
             }
         }
         int pointer = 0;
-        for (int gz = 0; gz < VERTEX_COUNT - 1; gz++) {
+        for (int gz = 0; gz < VERTEX_COUNT - 1; gz++) {                                                                 //calculate Indices
             for (int gx = 0; gx < VERTEX_COUNT - 1; gx++) {
                 int topLeft = (gz * VERTEX_COUNT) + gx;
                 int topRight = topLeft + 1;
@@ -81,11 +85,21 @@ public class TerrainTile {
         return model;
     }
 
-//    public Texture getTexture() {
-//        return texture;
-//    }
-
     public Matrix4f getModelMatrix() {
         return ml_matrix;
+    }
+
+    private Vector3f calculateNormal(int x, int z, HeigthGenerator generator){
+        float heightL = getHeight(x-1, z, generator);
+        float heightR = getHeight(x+1, z, generator);
+        float heightD = getHeight(x, z-1, generator);
+        float heightU = getHeight(x, z+1, generator);
+        Vector3f normal = new Vector3f(heightL-heightR, 2f, heightD - heightU);
+        normal.normalize(normal);
+        return normal;
+    }
+
+    private float getHeight(int x, int z, HeigthGenerator generator){
+        return generator.generateHeigth(x, z);
     }
 }

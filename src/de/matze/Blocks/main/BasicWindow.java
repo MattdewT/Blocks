@@ -76,6 +76,8 @@ public class BasicWindow implements Runnable{
 
         WindowUtils.init(keyboard, mousePos,mouseButtons);
 
+        glEnable(GL_DEPTH_TEST);
+
         Player = new GameObject(0);
         Player.addComponent(new TransformComponent(new Vector3f(0, 0, 0)));
         Player.addComponent(new ViewComponent());
@@ -86,10 +88,10 @@ public class BasicWindow implements Runnable{
         terrains = new ArrayList<>();
         terrainShader = new TerrainShader();
 //        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-200, 200, -150, 150, 0.3f, 1200),terrainShader);
-        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
+        terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, (float)WindowUtils.getWidth() / (float)WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
         terrains.add(new TerrainTile(0, 0, loader));
 
-        skybox = new Skybox(loader, Matrix4f.perspective(68f, WindowUtils.getWidth() / WindowUtils.getHeight(), 0.3f, 1200.0f));
+        skybox = new Skybox(loader, Matrix4f.perspective(68f, (float)WindowUtils.getWidth() / (float)WindowUtils.getHeight(), 0.3f, 1200.0f));
     }
 
     private void update() {
