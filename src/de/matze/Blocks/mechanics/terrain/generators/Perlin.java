@@ -15,8 +15,11 @@ public class Perlin  extends HeigthGenerator {
     private static final float OCTAVES = 3;
     private static final float ROUGHNESS = 0.3f;
 
-    private static final float inner_circle = 45;
-    private static final float outer_circle = 60;
+    private static final float inner_circle = 32;
+    private static final float outer_circle = 48;
+
+    private static final float center_x = 48;
+    private static final float center_y = 48;
 
     private Random random = new Random();
     private int seed;
@@ -41,7 +44,7 @@ public class Perlin  extends HeigthGenerator {
     @Override
     public float generateHeigth(int x, int z) {
         float amp_mul = 1;
-        float distance = (float) Math.sqrt((inner_circle - (x + xOffset)) * (inner_circle - (x + xOffset)) + (inner_circle - (z + zOffset)) * (inner_circle - (z + zOffset)));  //calculate the distance and
+        float distance = (float) Math.sqrt((center_x - (x + xOffset)) * (center_x - (x + xOffset)) + (center_y - (z + zOffset)) * (center_y - (z + zOffset)));  //calculate the distance and
         if(distance > inner_circle && distance < outer_circle){                                                                                                                 //decide which is inside the circle
             amp_mul *= 1 - (distance - inner_circle) / (outer_circle - inner_circle);
         } else if(distance >= outer_circle) {
