@@ -85,11 +85,22 @@ public class BasicWindow implements Runnable{
         Player.addComponent(new PlayerComponent(Player));
 
         loader = new Loader();
-        terrains = new ArrayList<>();
         terrainShader = new TerrainShader();
 //        terrainRenderer = new TerrainRenderer(Matrix4f.orthographic(-200, 200, -150, 150, 0.3f, 1200),terrainShader);
         terrainRenderer = new TerrainRenderer(Matrix4f.perspective(68f, (float)WindowUtils.getWidth() / (float)WindowUtils.getHeight(), 0.3f, 1200.0f),terrainShader);
+
+        terrains = new ArrayList<>();
+
         terrains.add(new TerrainTile(0, 0, loader));
+        terrains.add(new TerrainTile(1, 0, loader));
+        terrains.add(new TerrainTile(1, 1, loader));
+        terrains.add(new TerrainTile(0, 1, loader));
+
+        terrains.add(new TerrainTile(2, 0, loader));
+        terrains.add(new TerrainTile(2, 1, loader));
+        terrains.add(new TerrainTile(2, 2, loader));
+        terrains.add(new TerrainTile(1, 2, loader));
+        terrains.add(new TerrainTile(0, 2, loader));
 
         skybox = new Skybox(loader, Matrix4f.perspective(68f, (float)WindowUtils.getWidth() / (float)WindowUtils.getHeight(), 0.3f, 1200.0f));
     }

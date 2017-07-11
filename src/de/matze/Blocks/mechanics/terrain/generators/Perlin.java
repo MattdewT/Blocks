@@ -11,27 +11,53 @@ import java.util.Random;
 
 public class Perlin  extends HeigthGenerator {
 
-    private static final float AMPLITUDE = 400f / 8f;
-    private static final float OCTAVES = 5;
-    private static final float ROUGHNESS = 0.5f;
+    private static final float AMPLITUDE = 30f;
+    private static final float OCTAVES = 3;
+    private static final float ROUGHNESS = 0.3f;
+
+    private static final float inner_circle = 45;
+    private static final float outer_circle = 60;
 
     private Random random = new Random();
     private int seed;
 
+    private int xOffset;
+    private int zOffset;
+
+    public Perlin(int gridX, int gridZ, int vertexCount, int seed) {
+        super(GeneratorTypes.Perlin);
+        this.seed = seed;
+        this.xOffset = gridX * (vertexCount - 1);
+        this.zOffset = gridZ * (vertexCount - 1);
+    }
+
     public Perlin() {
         super(GeneratorTypes.Perlin);
         this.seed = random.nextInt(1000000000);
+        this.xOffset = 0;
+        this.zOffset = 0;
     }
 
     @Override
     public float generateHeigth(int x, int z) {
+        float amp_mul = 1;
+        float distance = (float) Math.sqrt((inner_circle - (x + xOffset)) * (inner_circle - (x + xOffset)) + (inner_circle - (z + zOffset)) * (inner_circle - (z + zOffset)));  //calculate the distance and
+        if(distance > inner_circle && distance < outer_circle){                                                                                                                 //decide which is inside the circle
+            amp_mul *= 1 - (distance - inner_circle) / (outer_circle - inner_circle);
+        } else if(distance >= outer_circle) {
+            amp_mul = 0.1f;
+        }
+
         float total = 0;
-        float d = (float) Math.pow(2, OCTAVES - 1);
+        float d = (float) Math.pow(2, OCTAVES - 1);                                                                                                                             //generate noise
         for(int i = 0; i < OCTAVES; i++) {
             float freq = (float) (Math.pow(2, i) / d);
             float amp = (float) Math.pow(ROUGHNESS, i) * AMPLITUDE;
-            total += getInterpolatedNoise(x * freq, z * freq) * amp;
+            total += getInterpolatedNoise((x + xOffset) * freq, (z + zOffset) * freq) * amp;
+
+            total = total * amp_mul - 15 * (1 - amp_mul);                                                                                                                      //apply circle
         }
+
         return total;
     }
 

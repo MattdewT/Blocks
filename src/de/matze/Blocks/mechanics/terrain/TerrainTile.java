@@ -29,7 +29,7 @@ public class TerrainTile {
     public TerrainTile(int gridX, int gridZ, Loader loader) {
         this.x = gridX * SIZE;
         this.z = gridZ * SIZE;
-        this.model = generateTerrain(loader, new Perlin());
+        this.model = generateTerrain(loader, new Perlin(gridX, gridZ, VERTEX_COUNT, 0));
         ml_matrix = Matrix4f.translate(x, 0, z);
     }
 
@@ -42,9 +42,10 @@ public class TerrainTile {
         int vertexPointer = 0;
         for (int i = 0; i < VERTEX_COUNT; i++) {
             for (int j = 0; j < VERTEX_COUNT; j++) {
-                vertices[vertexPointer * 3] = -(float) j / ((float) VERTEX_COUNT - 1) * SIZE;                           //calculate VertexPositions
-                vertices[vertexPointer * 3 + 1] = heigthGenerator.generateHeigth(j,i);
-                vertices[vertexPointer * 3 + 2] = -(float) i / ((float) VERTEX_COUNT - 1) * SIZE;
+
+                vertices[vertexPointer * 3] = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;                           //calculate VertexPositions
+                vertices[vertexPointer * 3 + 1] = getHeight(j,i, heigthGenerator);
+                vertices[vertexPointer * 3 + 2] = (float) i / ((float) VERTEX_COUNT - 1) * SIZE;
 
                 Vector3f normal = calculateNormal(j,i, heigthGenerator);                                                //set Normals
                 normals[vertexPointer * 3] = normal.x;
