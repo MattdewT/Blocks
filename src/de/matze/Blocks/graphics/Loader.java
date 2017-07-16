@@ -81,7 +81,7 @@ public class Loader {
 
     public VertexArray loadToVAO(float[] verticies, int dimensions) {
         int VaoID = createVAO();
-        AddAttributeList(verticies, 0, 3);
+        AddAttributeList(verticies, 0, dimensions);
         unbindVAO();
         return new VertexArray(VaoID, verticies.length / dimensions);
     }
@@ -105,6 +105,21 @@ public class Loader {
         glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, 0);
         textures.add(texID);
+        return texID;
+    }
+
+    //ToDo: Copied Function
+    public int loadTexture(String path) {
+        TextureData data = decodeTextureFile(path);
+
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, data.getWidth(), data.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.getBuffer());
+        glBindTexture(GL_TEXTURE_2D, 0);
+        textures.add(texID);
+
         return texID;
     }
 

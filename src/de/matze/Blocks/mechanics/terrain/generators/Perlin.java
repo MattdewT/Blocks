@@ -1,5 +1,7 @@
 package de.matze.Blocks.mechanics.terrain.generators;
 
+import de.matze.Blocks.mechanics.terrain.TerrainShader;
+
 import java.util.Random;
 
 /**
@@ -19,7 +21,7 @@ public class Perlin  extends HeigthGenerator {
     private static final float outer_circle = 48;
 
     private static final float center_x = 48;
-    private static final float center_y = 48;
+    private static final float center_z = 48;
 
     private Random random = new Random();
     private int seed;
@@ -44,7 +46,7 @@ public class Perlin  extends HeigthGenerator {
     @Override
     public float generateHeigth(int x, int z) {
         float amp_mul = 1;
-        float distance = (float) Math.sqrt((center_x - (x + xOffset)) * (center_x - (x + xOffset)) + (center_y - (z + zOffset)) * (center_y - (z + zOffset)));  //calculate the distance and
+        float distance = (float) Math.sqrt((center_x - (x + xOffset)) * (center_x - (x + xOffset)) + (center_z - (z + zOffset)) * (center_z - (z + zOffset)));  //calculate the distance and
         if(distance > inner_circle && distance < outer_circle){                                                                                                                 //decide which is inside the circle
             amp_mul *= 1 - (distance - inner_circle) / (outer_circle - inner_circle);
         } else if(distance >= outer_circle) {
@@ -95,6 +97,10 @@ public class Perlin  extends HeigthGenerator {
         double theta = blend * Math.PI;
         float f = (float) (1f - Math.cos(theta)) * 0.5f;
         return a * (1f - f) + b * f;
+    }
+
+    public static void setUpShader(TerrainShader s, float multiplyer, float expander) {
+        s.setBlendValues(center_x * multiplyer, center_z * multiplyer, inner_circle * multiplyer + expander, outer_circle * multiplyer + expander);
     }
 
 }

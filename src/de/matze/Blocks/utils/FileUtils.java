@@ -1,8 +1,6 @@
 package de.matze.Blocks.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Nimmt Textdatein, parst diese und lädt sie zu
@@ -33,6 +31,14 @@ public class FileUtils {
             e.printStackTrace();
         }
         return result.toString();
+    }
+
+    public static void saveAsString(String location, String data) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(location))) {
+            bw.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

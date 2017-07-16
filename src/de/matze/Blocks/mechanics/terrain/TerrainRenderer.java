@@ -1,6 +1,8 @@
 package de.matze.Blocks.mechanics.terrain;
 
 import de.matze.Blocks.maths.Matrix4f;
+import de.matze.Blocks.maths.Vector4f;
+import de.matze.Blocks.mechanics.terrain.generators.Perlin;
 
 import java.util.List;
 
@@ -25,10 +27,12 @@ public class TerrainRenderer {
         this.shader = shader;
         shader.enable();
         shader.setProjectionMatrix(pr_matrix);
+        Perlin.setUpShader(shader, TerrainTile.SIZE / TerrainTile.VERTEX_COUNT, 10f);
         shader.disable();
     }
 
-    public void render(List<TerrainTile> terrains) {
+    public void render(List<TerrainTile> terrains, Vector4f cliplane) {
+        shader.setClipPlane(cliplane);
         for(TerrainTile t : terrains) {
 //			if(!frustum.inFrustum(t.getModel().getAABB().getCenter(), t.getModel().getAABB().getRadius()))
 //				continue;

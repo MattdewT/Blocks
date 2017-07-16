@@ -18,18 +18,18 @@ import de.matze.Blocks.mechanics.terrain.generators.Perlin;
 
 public class TerrainTile {
 
-    private static final float SIZE = 100;
-    private static final int VERTEX_COUNT = 32;
+    protected static final float SIZE = 100;
+    protected static final int VERTEX_COUNT = 32;
 
     private float x;
     private float z;
     private VertexArray model;
     private Matrix4f ml_matrix;
 
-    public TerrainTile(int gridX, int gridZ, Loader loader) {
+    public TerrainTile(int gridX, int gridZ, Loader loader, int seed) {
         this.x = gridX * SIZE;
         this.z = gridZ * SIZE;
-        this.model = generateTerrain(loader, new Perlin(gridX, gridZ, VERTEX_COUNT, 0));
+        this.model = generateTerrain(loader, new Perlin(gridX, gridZ, VERTEX_COUNT, seed));
         ml_matrix = Matrix4f.translate(x, 0, z);
     }
 

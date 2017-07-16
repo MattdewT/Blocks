@@ -1,6 +1,7 @@
 #version 130
 
 flat varying vec3 v_normal;
+varying float v_blend_factor;
 
 void main()
 {
@@ -14,5 +15,5 @@ void main()
 
     vec3 v_diffuse = diffuse * vec3(0.5f, 0.35f, 0.05f);
 
-	gl_FragColor = vec4(v_diffuse,1);
+	gl_FragColor = vec4(mix(v_diffuse, vec3(1), v_blend_factor),1);
 }

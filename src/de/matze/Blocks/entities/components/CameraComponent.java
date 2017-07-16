@@ -32,4 +32,8 @@ public class CameraComponent extends Component {
     public Matrix4f getViewMatrix() {
         return Matrix4f.ViewMatrix(getViewPoint(), getPosition());
     }
+
+    public void invertPitch() {
+        viewComponent.viewpoint.x = -viewComponent.viewpoint.x;
+    }
 }

@@ -2,6 +2,7 @@ package de.matze.Blocks.mechanics.terrain;
 
 import de.matze.Blocks.graphics.Shader;
 import de.matze.Blocks.maths.Matrix4f;
+import de.matze.Blocks.maths.Vector4f;
 
 /**
  * @author matze tiroch
@@ -19,6 +20,10 @@ public class TerrainShader extends Shader {
     private int Location_pr_matrix;
     private int Location_view_matrix;
     private int Location_ml_matrix;
+    private int Location_center;
+    private int Location_inner;
+    private int Location_outer;
+    private int Location_clipPlane;
 
     public TerrainShader() {
         super(vertPath, fragPath);
@@ -35,6 +40,10 @@ public class TerrainShader extends Shader {
         Location_pr_matrix = getUniformLocation("pr_matrix");
         Location_view_matrix = getUniformLocation("view_matrix");
         Location_ml_matrix = getUniformLocation("ml_matrix");
+        Location_center = getUniformLocation("center");
+        Location_inner = getUniformLocation("inner");
+        Location_outer = getUniformLocation("outer");
+        Location_clipPlane = getUniformLocation("clipPlane");
     }
 
     public void setProjectionMatrix(Matrix4f pr_matrix) {
@@ -47,6 +56,16 @@ public class TerrainShader extends Shader {
 
     public void setModelMatrix(Matrix4f ml_matrix) {
         super.setUniformMat4f(Location_ml_matrix, ml_matrix);
+    }
+
+    public void setBlendValues(float center_x, float center_z, float inner, float outer) {
+        super.setUniform2f(Location_center, center_x, center_z);
+        super.setUniform1f(Location_inner, inner);
+        super.setUniform1f(Location_outer, outer);
+    }
+
+    public void setClipPlane(Vector4f plane) {
+        super.setUniform4f(Location_clipPlane, plane);
     }
 }
 
