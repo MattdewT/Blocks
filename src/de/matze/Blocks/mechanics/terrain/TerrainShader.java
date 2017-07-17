@@ -17,6 +17,9 @@ public class TerrainShader extends Shader {
     private final static String vertPath = "src/de/matze/Blocks/mechanics/terrain/TerrainShader.vs";
     private final static String fragPath = "src/de/matze/Blocks/mechanics/terrain/TerrainShader.fs";
 
+    private final static String vertPathB = "src/de/matze/Blocks/mechanics/terrain/TerrainShaderB.vs";
+    private final static String fragPathB = "src/de/matze/Blocks/mechanics/terrain/TerrainShaderB.fs";
+
     private int Location_pr_matrix;
     private int Location_view_matrix;
     private int Location_ml_matrix;
@@ -24,6 +27,10 @@ public class TerrainShader extends Shader {
     private int Location_inner;
     private int Location_outer;
     private int Location_clipPlane;
+
+    public TerrainShader(char shaderVersion) {
+        super(vertPathB, fragPathB);
+    }
 
     public TerrainShader() {
         super(vertPath, fragPath);

@@ -46,7 +46,7 @@ void main(void) {
 	vec3 viewVector = normalize(toCameraVector);
 	float refractiveFactor = dot(vec3(0,-1,0), viewVector);
 	refractiveFactor = pow(refractiveFactor, 0.5);
-	refractiveFactor = clamp(refractiveFactor, 0.001, 0.999);
+	refractiveFactor = clamp(refractiveFactor, 0.4, 0.8);
 	
 	gl_FragColor = mix(ReflectionColor, RefractionColor, refractiveFactor);
 	gl_FragColor.a = clamp(waterDepth/5.0, 0.0, 1.0);
