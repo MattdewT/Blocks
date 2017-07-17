@@ -2,6 +2,7 @@ package de.matze.Blocks.main;
 
 import de.matze.Blocks.entities.GameObject;
 import de.matze.Blocks.entities.components.*;
+import de.matze.Blocks.graphics.Fbo;
 import de.matze.Blocks.graphics.Loader;
 import de.matze.Blocks.input.Keyboard;
 import de.matze.Blocks.input.MouseButtons;
@@ -9,6 +10,10 @@ import de.matze.Blocks.input.MousePos;
 import de.matze.Blocks.maths.Matrix4f;
 import de.matze.Blocks.maths.Vector3f;
 import de.matze.Blocks.maths.Vector4f;
+import de.matze.Blocks.mechanics.postProcessing.PPRenderer;
+import de.matze.Blocks.mechanics.postProcessing.PostProcessingUtils;
+import de.matze.Blocks.mechanics.postProcessing.gaussianblur.HBlur;
+import de.matze.Blocks.mechanics.postProcessing.gaussianblur.VBlur;
 import de.matze.Blocks.mechanics.skybox.Skybox;
 import de.matze.Blocks.mechanics.terrain.TerrainRenderer;
 import de.matze.Blocks.mechanics.terrain.TerrainShader;
@@ -57,6 +62,12 @@ public class BasicWindow implements Runnable{
     WaterRenderer waterRenderer;
     WaterShader waterShader;
     WaterFrameBuffers waterFrameBuffers;
+
+    //PostProcessing
+    PPRenderer ppRenderer;
+    Fbo fbo;
+    VBlur vblur;
+    HBlur hblur;
 
     public  void start() {
         running = true;
@@ -136,6 +147,13 @@ public class BasicWindow implements Runnable{
         waterTiles.add(new WaterTile(5, 0, 5));
 
         skybox = new Skybox(loader, pr_matrix);
+
+        PostProcessingUtils.init(loader);
+        ppRenderer = new PPRenderer();
+
+        fbo = new Fbo(800, 600, 1);
+        vblur = new VBlur(800 / 4, 600 / 3);
+        hblur = new HBlur(800 / 4, 600 / 3);
     }
 
     private void update() {
@@ -165,6 +183,7 @@ public class BasicWindow implements Runnable{
     private void render() {
         glEnable(GL30.GL_CLIP_DISTANCE0);
 
+        //=====================================================================================================================================================
         waterFrameBuffers.bindReflectionFrameBuffer();      //Reflection Render Call
         float distance = (((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getPosition().y - waterTiles.get(0).getHeight()) * 2;
         ((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getPosition().y -= distance;
@@ -173,16 +192,43 @@ public class BasicWindow implements Runnable{
         ((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).getPosition().y += distance;
         ((CameraComponent) Player.getComponent(Component.ComponentTypes.Camera)).invertPitch();
 
+        //=====================================================================================================================================================
         waterFrameBuffers.bindRefractionFrameBuffer();      //Refraction Render Call
         renderScene(new Vector4f(0, -1, 0, waterTiles.get(0).getHeight() + 1));
 
+        //=====================================================================================================================================================
         waterFrameBuffers.unbindFrameBuffer();              //Normal Render Call
 
+        //=====================================================================================================================================================
+        fbo.bindFrameBuffer();;
         glDisable(GL30.GL_CLIP_DISTANCE0);
 
         renderScene(new Vector4f(0, 1, 0, 100000));
 
         waterRenderer.render(waterTiles, (CameraComponent) Player.getComponent(Component.ComponentTypes.Camera));
+        fbo.unbindFrameBuffer();
+
+        //=====================================================================================================================================================
+        PostProcessingUtils.start();
+        glBindTexture(GL_TEXTURE_2D, fbo.getColourTexture());
+        vblur.render();                                                          //vertical blur
+        glBindTexture(GL_TEXTURE_2D, vblur.getOutputTexture());
+        hblur.render();                                                          //horizental blur
+
+        if(Keyboard.keys[GLFW_KEY_1]) {
+            glBindTexture(GL_TEXTURE_2D, waterFrameBuffers.getReflectionTexture());
+        } else if (Keyboard.keys[GLFW_KEY_2]) {
+            glBindTexture(GL_TEXTURE_2D, waterFrameBuffers.getRefractionTexture());
+        } else if (Keyboard.keys[GLFW_KEY_3]) {
+            glBindTexture(GL_TEXTURE_2D, vblur.getOutputTexture());
+        } else if (Keyboard.keys[GLFW_KEY_4]) {
+            glBindTexture(GL_TEXTURE_2D, hblur.getOutputTexture());
+        } else {
+            glBindTexture(GL_TEXTURE_2D, fbo.getColourTexture());
+        }
+        ppRenderer.render();                                                     //standard picture
+
+        PostProcessingUtils.stop();
 
         glfwSwapBuffers(WindowUtils.getWindow());
     }
