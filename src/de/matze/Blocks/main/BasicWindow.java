@@ -70,7 +70,7 @@ public class BasicWindow implements Runnable{
         while(running) {
             render();
             update();
-            if(glfwWindowShouldClose(WindowUtils.getWindow()) == GL_TRUE)
+            if(glfwWindowShouldClose(WindowUtils.getWindow()))
                 running = false;
         }
         WindowUtils.cleanUp();
@@ -80,7 +80,7 @@ public class BasicWindow implements Runnable{
     }
 
     private void init() {
-        if(glfwInit() == GL_FALSE) {
+        if(!glfwInit()) {
             throw new IllegalStateException("GLFW failed to init");
         }
 

@@ -1,1 +1,1 @@
-LWJGL ${build.version} build 9
+LWJGL 3.2.3 build 13

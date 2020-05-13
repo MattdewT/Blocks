@@ -2,8 +2,8 @@ package de.matze.Blocks.utils;
 
 import de.matze.Blocks.input.*;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWvidmode;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 
 import java.nio.ByteBuffer;
 
@@ -52,8 +52,8 @@ public class WindowUtils {
 
 
         //Fenster zentrieren
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
+        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetWindowPos(window, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
 
         //Input
         glfwSetKeyCallback(window, input);
@@ -66,7 +66,8 @@ public class WindowUtils {
         //Contex setzen
         glfwMakeContextCurrent(window);
         glfwShowWindow(window);
-        GLContext.createFromCurrent();
+        //GLContext.createFromCurrent();        //old context creation
+        GL.createCapabilities();                //new context creation
 
         System.out.println("OpenGL: " + glGetString(GL_VERSION));
     }
